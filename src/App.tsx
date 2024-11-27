@@ -5,22 +5,28 @@ import { ErrorFallback } from "@/components/ErrorFallback";
 import { Suspense } from "react";
 import { Loader, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
+import { Notifications } from "@mantine/notifications";
+import { Layout } from "@/components/Layout";
 
 function App() {
   return (
     <BrowserRouter>
       <MantineProvider>
+        <Notifications />
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <Suspense fallback={<Loader />}>
-            <Routes>
-              {routePaths.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
-            </Routes>
+            <Layout>
+              <Routes>
+                {routePaths.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
+            </Layout>
           </Suspense>
         </ErrorBoundary>
       </MantineProvider>
