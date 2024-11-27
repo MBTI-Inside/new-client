@@ -1,19 +1,29 @@
-import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import routePaths from "@/routers";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorFallback } from "@/components/ErrorFallback";
+import { Suspense } from "react";
+import { Loader, MantineProvider } from "@mantine/core";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div></div>
-      <h1>Vite + React</h1>
-      <button onClick={() => setCount((count) => count + 1)}>
-        count is {count}
-      </button>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR
-      </p>
-    </>
+    <BrowserRouter>
+      <MantineProvider>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Suspense fallback={<Loader />}>
+            <Routes>
+              {routePaths.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.element}
+                />
+              ))}
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
+      </MantineProvider>
+    </BrowserRouter>
   );
 }
 
