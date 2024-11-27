@@ -4,6 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "@/components/ErrorFallback";
 import { Suspense } from "react";
 import { Loader, MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
 
 function App() {
   return (
