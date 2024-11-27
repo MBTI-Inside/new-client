@@ -20,7 +20,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Custom Options */
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
+
+  // 컴파일할 파일들 지정
   "include": ["src"]
 }
