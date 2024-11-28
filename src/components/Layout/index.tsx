@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <AppShell header={{ height: 72 }} footer={{ height: 72 }}>
+    <AppShell header={{ height: 72 }}>
       <AppShell.Header>
         <LayoutHeader />
       </AppShell.Header>
