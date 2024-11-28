@@ -12,7 +12,6 @@ export const Layout = ({ children }: LayoutProps) => {
         <LayoutHeader />
       </AppShell.Header>
       <AppShell.Main>{children}</AppShell.Main>
-      <AppShell.Footer>bbb</AppShell.Footer>
     </AppShell>
   );
 };
