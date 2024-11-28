@@ -1,4 +1,4 @@
-import { ActionIcon, Anchor, Drawer, Flex } from "@mantine/core";
+import { ActionIcon, Anchor, Button, Drawer, Flex } from "@mantine/core";
 import MainLogoSvg from "@/assets/mainlogo.svg";
 import useRouter from "@/hooks/useRouter";
 import { IconMenu2 } from "@tabler/icons-react";
@@ -9,7 +9,14 @@ export const LayoutHeader = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <Flex w="100%" h="100%" p="xs" justify="space-between" align="center">
+    <Flex
+      w="100%"
+      h="100%"
+      p="xs"
+      justify="space-between"
+      align="center"
+      bg="violet.2"
+    >
       <Anchor
         h="100%"
         onClick={() => {
@@ -24,8 +31,17 @@ export const LayoutHeader = () => {
         withCloseButton={false}
         size="70%"
       >
-        {/* Drawer content */}
-        hello
+        <Flex direction="column" gap="md">
+          <Button size="xl" color="yellow">
+            테스트 하러가기
+          </Button>
+          <Button size="xl" color="teal">
+            유형통계 보러가기
+          </Button>
+          <Button size="xl" color="cyan">
+            메모지 보러가기
+          </Button>
+        </Flex>
       </Drawer>
       <ActionIcon variant="subtle" color="dark" size="3rem" onClick={open}>
         <IconMenu2 size="2.5rem" />

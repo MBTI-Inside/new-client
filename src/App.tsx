@@ -13,7 +13,7 @@ import { globalTheme } from "@/styles/global";
 function App() {
   return (
     <BrowserRouter>
-      <MantineProvider theme={globalTheme}>
+      <MantineProvider theme={globalTheme} withGlobalClasses withStaticClasses>
         <Notifications />
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <Suspense fallback={<Loader />}>
