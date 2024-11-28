@@ -8,6 +8,11 @@ export const LayoutHeader = () => {
   const { navigateTo } = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
+  const handleNavigation = (path: string) => {
+    navigateTo(path);
+    close(); // Drawer 닫기
+  };
+
   return (
     <Flex
       w="100%"
@@ -32,13 +37,25 @@ export const LayoutHeader = () => {
         size="70%"
       >
         <Flex direction="column" gap="md">
-          <Button size="xl" color="yellow">
+          <Button
+            size="xl"
+            color="yellow"
+            onClick={() => handleNavigation("/test")}
+          >
             테스트 하러가기
           </Button>
-          <Button size="xl" color="teal">
+          <Button
+            size="xl"
+            color="teal"
+            onClick={() => handleNavigation("/stats")}
+          >
             유형통계 보러가기
           </Button>
-          <Button size="xl" color="cyan">
+          <Button
+            size="xl"
+            color="cyan"
+            onClick={() => handleNavigation("/memo")}
+          >
             메모지 보러가기
           </Button>
         </Flex>
