@@ -12,4 +12,9 @@ export default defineConfig({
       "@tabler/icons-react": "@tabler/icons-react/dist/esm/icons/index.mjs",
     },
   },
+  // TODO: only dev / 추후 제거 필요
+  server: {
+    host: "0.0.0.0", // 네트워크 접근 허용
+    port: 5173, // 포트 번호
+  },
 });
