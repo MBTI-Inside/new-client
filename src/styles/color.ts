@@ -169,4 +169,16 @@ export const themeColor: MantineThemeColors = {
     "#E8590C",
     "#D9480F",
   ],
+  white: [
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+    "#FFFFFF",
+  ],
 };
