@@ -48,6 +48,11 @@ export const MemoCard = ({ memo }: MemoCardProps) => {
           });
         },
         onError: (error: Error) => {
+          notifications.show({
+            title: "공감 실패",
+            message: "공감 클릭 중 오류가 발생했어요. 😥",
+            color: "red",
+          });
           setError(error);
         },
       }
