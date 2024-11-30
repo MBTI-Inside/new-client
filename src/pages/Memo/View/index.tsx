@@ -1,3 +1,8 @@
+import { MemoLikeResponse, MemoPost } from "@/@types";
+import axiosRequest from "@/api";
+import useCustomMutation from "@/hooks/useCustomMutation";
+import useCustomQuery from "@/hooks/useCustomQuery";
+import { useHandleError } from "@/hooks/useHandleError";
 import useRouter from "@/hooks/useRouter";
 import {
   ActionIcon,
@@ -13,6 +18,7 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
   IconArrowLeft,
   IconCornerDownRight,
@@ -39,7 +45,52 @@ const CommentForm = () => {
 };
 
 const MemoViewPage = () => {
-  const { goBack } = useRouter();
+  const setError = useHandleError(); // 에러 핸들링 함수
+  const { goBack, params } = useRouter();
+  const { id } = params as { id: string };
+
+  const { data: memo } = useCustomQuery(["get-memo"], {
+    method: "get",
+    url: `/memos/${id}`,
+    queryFn: () => axiosRequest.requestAxios<MemoPost>("get", `/memos/${id}`),
+    enabled: !!id,
+  });
+
+  const { mutate } = useCustomMutation<MemoLikeResponse>(["get-memo"], {
+    method: "patch",
+  });
+
+  const handleClickLike = (id: string) => {
+    mutate(
+      {
+        url: `/memos/${id}/like`, // 동적 URL
+      },
+      {
+        onSuccess: (data: MemoLikeResponse) => {
+          notifications.show({
+            title: (
+              <Flex direction="column">
+                <Text lineClamp={1} fw={600}>
+                  {memo?.title}
+                </Text>
+                <Text>글을 좋아합니다.</Text>
+              </Flex>
+            ),
+            message: <Text>공감이 {data.likeCount}개가 되었어요! 🥰</Text>,
+            color: "blue",
+          });
+        },
+        onError: (error: Error) => {
+          notifications.show({
+            title: "공감 실패",
+            message: "공감 클릭 중 오류가 발생했어요. 😥",
+            color: "red",
+          });
+          setError(error);
+        },
+      }
+    );
+  };
 
   return (
     <Flex direction="column" w="100%" h="100%" bg="cyan" p="md" gap="md">
@@ -47,7 +98,7 @@ const MemoViewPage = () => {
         <ActionIcon variant="subtle" color="dark" onClick={() => goBack()}>
           <IconArrowLeft />
         </ActionIcon>
-        <Text fz="1.5rem">ESTJ</Text>
+        <Text fz="1.5rem">{memo?.mbtiType}</Text>
         <Menu shadow="md" withArrow withinPortal>
           <Menu.Target>
             <ActionIcon variant="subtle" color="dark">
@@ -73,21 +124,21 @@ const MemoViewPage = () => {
         </Menu>
       </Flex>
       <Flex h="100%">
-        <Card shadow="sm" padding="lg" radius="md" bg="cyan.4" h="100%">
+        <Card
+          shadow="sm"
+          padding="lg"
+          radius="md"
+          bg="cyan.4"
+          w="100%"
+          h="100%"
+        >
           <Flex direction="column" gap="sm" justify="space-between">
             <Flex direction="column" gap="md">
               <Group justify="space-between">
-                <Text fw={600}>What is Lorem Ipsum?</Text>
+                <Text fw={600}>{memo?.title}</Text>
               </Group>
               <Text size="md" h="20rem">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more a
+                {memo?.content}
               </Text>
             </Flex>
             <Flex justify="space-between" align="center">
@@ -97,8 +148,9 @@ const MemoViewPage = () => {
                   variant="subtle"
                   leftSection={<IconHeart />}
                   color="dark"
+                  onClick={() => handleClickLike(memo?._id as string)}
                 >
-                  12
+                  {memo?.likeCount}
                 </Button>
               </ButtonGroup>
               <Text ta="end">2024-11-29 13:57</Text>
@@ -110,9 +162,9 @@ const MemoViewPage = () => {
         <Flex w="100%" justify="flex-start" gap="xs" align="center">
           <Text fz="lg">댓글</Text>
           <IconMessage2 />
-          <Text fz="lg">[6]</Text>
+          <Text fz="lg">[{memo?.cmtCount}]</Text>
         </Flex>
-        <Text>댓글이 존재하지 않습니다.</Text>
+        {!memo?.cmtCount && <Text>댓글이 존재하지 않습니다.</Text>}
         <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
           <Flex direction="column" gap="xs">
             <Flex direction="column">
