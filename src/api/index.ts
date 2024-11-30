@@ -4,7 +4,7 @@ const allowMethod: string[] = ["get", "post", "put", "patch", "delete"];
 
 // Axios 인스턴스 생성
 const apiInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:4000/v1",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1",
   timeout: 5000,
   withCredentials: true,
 });
@@ -52,8 +52,7 @@ const axiosRequest: AxiosRequest = {
         data,
         headers,
       });
-
-      return response as T;
+      return response.data as T;
     } catch (error) {
       console.log(error);
       throw error;
