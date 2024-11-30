@@ -3,6 +3,7 @@ import axiosRequest from "@/api";
 import { MBTI_OPTIONS_DATA } from "@/constants/MBTIOptions";
 import useCustomMutation from "@/hooks/useCustomMutation";
 import useCustomQuery from "@/hooks/useCustomQuery";
+import { useHandleError } from "@/hooks/useHandleError";
 import { useModal } from "@/hooks/useModal";
 import { themeColor } from "@/styles/color";
 import {
@@ -46,6 +47,7 @@ interface NoteProps {
 }
 
 export const Note = ({ id }: NoteProps) => {
+  const setError = useHandleError(); // 에러 핸들링 함수
   const { closeModal } = useModal();
   const info = {
     method: id ? "patch" : "post",
@@ -107,14 +109,19 @@ export const Note = ({ id }: NoteProps) => {
       {
         onSuccess: (data) => {
           notifications.show({
-            title: "메모지 작성 성공",
-            message: "메모가 작성되었어요! 🌟",
+            title: `메모지 ${!id ? "작성" : "수정"} 성공`,
+            message: `메모가 ${!id ? "작성" : "수정"}되었어요! 🌟`,
             color: "green",
           });
           closeModal(data);
         },
         onError: (error) => {
-          throw error;
+          notifications.show({
+            title: `메모지 ${!id ? "작성" : "수정"} 실패`,
+            message: `메모 ${!id ? "작성" : "수정"} 중 오류가 발생했어요. 😥`,
+            color: "red",
+          });
+          setError(error);
         },
       }
     );
