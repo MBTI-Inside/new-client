@@ -1,11 +1,11 @@
-import { Fit, MBTI } from '@/@types/MBTI';
-import { MemoPost } from '@/@types/Memo';
+import { Fit, MBTI } from "@/@types/MBTI";
+import { MemoPost, MemoLikeResponse } from "@/@types/Memo";
 import {
   MBTIProportion,
   MBTIProportions,
   MBTIType,
-  Question
-} from '@/@types/Question';
+  Question,
+} from "@/@types/Question";
 
 export interface CommonResponse {
   _id: string;
@@ -15,10 +15,11 @@ export interface CommonResponse {
 
 export type {
   MemoPost,
+  MemoLikeResponse,
   Question,
   MBTIProportions,
   MBTIProportion,
   MBTI,
   MBTIType,
-  Fit
+  Fit,
 };

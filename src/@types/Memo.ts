@@ -9,3 +9,8 @@ export interface MemoPost {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface MemoLikeResponse {
+  _id: string;
+  likeCount: number;
+}
