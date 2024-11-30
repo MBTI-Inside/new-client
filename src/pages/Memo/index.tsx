@@ -1,26 +1,54 @@
+import { MemoPost } from "@/@types";
+import axiosRequest from "@/api";
 import { Note } from "@/components/Note";
+import { useHandleError } from "@/hooks/useHandleError";
 import { useModal } from "@/hooks/useModal";
-import useRouter from "@/hooks/useRouter";
-import {
-  ActionIcon,
-  Group,
-  Button,
-  Card,
-  Flex,
-  Text,
-  Badge,
-  ButtonGroup,
-} from "@mantine/core";
-import {
-  IconHeart,
-  IconMessage2,
-  IconPlus,
-  IconSearch,
-} from "@tabler/icons-react";
+import { useInView } from "react-intersection-observer";
+import { ActionIcon, Flex, Text, Loader } from "@mantine/core";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
+import { MemoCard } from "@/components/MemoCard";
 
 const MemoPage = () => {
-  const { navigateTo } = useRouter();
+  const setError = useHandleError(); // 에러 핸들링 함수
   const { openModal } = useModal();
+
+  const [limit] = useState(5);
+
+  const {
+    data: memos,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    ["get-memos"],
+    ({ pageParam: skip }) =>
+      axiosRequest.requestAxios<MemoPost[]>(
+        "get",
+        `/memos?limit=${limit}&skip=${skip}`
+      ),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.length === limit ? allPages.length * limit : undefined;
+      },
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      onError: (error: Error) => {
+        setError(error);
+      },
+    }
+  );
+
+  const { ref, inView } = useInView({
+    threshold: 1.0,
+    triggerOnce: false,
+  });
+
+  // 요소가 뷰포트에 보이면 fetchNextPage 호출
+  if (inView && hasNextPage && !isFetchingNextPage) {
+    fetchNextPage();
+  }
 
   return (
     <Flex direction="column" w="100%" h="100vh" bg="dark">
@@ -52,194 +80,16 @@ const MemoPage = () => {
         gap="md"
         justify="center"
       >
-        <Card shadow="sm" padding="lg" radius="md" bg="cyan.4" h="12rem">
-          <Flex direction="column" gap="sm" justify="space-between" h="100%">
-            <Flex
-              direction="column"
-              gap="md"
-              onClick={() => navigateTo("/memo/123")}
-            >
-              <Group justify="space-between">
-                <Text fw={600}>What is Lorem Ipsum?</Text>
-                <Badge color="pink">ESFP</Badge>
-              </Group>
-              <Text size="md" lineClamp={3} h="4.5rem">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <ButtonGroup>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconHeart />}
-                  color="dark"
-                >
-                  12
-                </Button>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconMessage2 />}
-                  color="dark"
-                >
-                  6
-                </Button>
-              </ButtonGroup>
-              <Text ta="end">2024-11-29 13:57</Text>
-            </Flex>
-          </Flex>
-        </Card>
-        <Card shadow="sm" padding="lg" radius="md" bg="grape.4" h="12rem">
-          <Flex direction="column" gap="sm" justify="space-between" h="100%">
-            <Flex
-              direction="column"
-              gap="md"
-              onClick={() => navigateTo("/memo/123")}
-            >
-              <Group justify="space-between">
-                <Text fw={600}>What is Lorem Ipsum?</Text>
-                <Badge color="pink">ESFP</Badge>
-              </Group>
-              <Text size="md" lineClamp={3} h="4.5rem">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <ButtonGroup>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconHeart />}
-                  color="dark"
-                >
-                  12
-                </Button>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconMessage2 />}
-                  color="dark"
-                >
-                  6
-                </Button>
-              </ButtonGroup>
-              <Text ta="end">2024-11-29 13:57</Text>
-            </Flex>
-          </Flex>
-        </Card>
-        <Card shadow="sm" padding="lg" radius="md" bg="yellow.4" h="12rem">
-          <Flex direction="column" gap="sm" justify="space-between" h="100%">
-            <Flex
-              direction="column"
-              gap="md"
-              onClick={() => navigateTo("/memo/123")}
-            >
-              <Group justify="space-between">
-                <Text fw={600}>What is Lorem Ipsum?</Text>
-                <Badge color="pink">ESFP</Badge>
-              </Group>
-              <Text size="md" lineClamp={3} h="4.5rem">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <ButtonGroup>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconHeart />}
-                  color="dark"
-                >
-                  12
-                </Button>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconMessage2 />}
-                  color="dark"
-                >
-                  6
-                </Button>
-              </ButtonGroup>
-              <Text ta="end">2024-11-29 13:57</Text>
-            </Flex>
-          </Flex>
-        </Card>
-        <Card shadow="sm" padding="lg" radius="md" bg="teal.4" h="12rem">
-          <Flex direction="column" gap="sm" justify="space-between" h="100%">
-            <Flex
-              direction="column"
-              gap="md"
-              onClick={() => navigateTo("/memo/123")}
-            >
-              <Group justify="space-between">
-                <Text fw={600}>What is Lorem Ipsum?</Text>
-                <Badge color="pink">ESFP</Badge>
-              </Group>
-              <Text size="md" lineClamp={3} h="4.5rem">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
-              </Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <ButtonGroup>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconHeart />}
-                  color="dark"
-                >
-                  12
-                </Button>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconMessage2 />}
-                  color="dark"
-                >
-                  6
-                </Button>
-              </ButtonGroup>
-              <Text ta="end">2024-11-29 13:57</Text>
-            </Flex>
-          </Flex>
-        </Card>
+        {memos?.pages.map((page, pageIndex) => {
+          return (
+            <Fragment key={pageIndex}>
+              {page.map((data) => {
+                return <MemoCard key={data._id} memo={data} />;
+              })}
+            </Fragment>
+          );
+        })}
+        <Flex ref={ref}>{isFetchingNextPage && <Loader />}</Flex>
         <Text ta="center" c="white">
           페이지의 끝!
         </Text>
