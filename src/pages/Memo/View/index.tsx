@@ -29,12 +29,12 @@ import {
 
 const CommentForm = () => {
   return (
-    <Paper w="100%" p="xs" bg="cyan.4">
+    <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
       <Flex direction="column" gap="xs">
         <Flex gap="xs" w="100%" align="center">
-          <TextInput w="40%" placeholder="닉네임" />
-          <PasswordInput w="100%" placeholder="비밀번호" />
-          <Button w="25%" size="sm">
+          <TextInput w="50%" size="sm" placeholder="닉네임" />
+          <PasswordInput size="sm" w="100%" placeholder="비밀번호" />
+          <Button w="30%" size="sm">
             등록
           </Button>
         </Flex>
@@ -165,70 +165,72 @@ const MemoViewPage = () => {
           <Text fz="lg">[{memo?.cmtCount}]</Text>
         </Flex>
         {!memo?.cmtCount && <Text>댓글이 존재하지 않습니다.</Text>}
-        <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
-          <Flex direction="column" gap="xs">
-            <Flex direction="column">
-              <Flex w="100%" justify="space-between">
-                <Text fw={600}>닉네임1</Text>
-                <Menu shadow="md" withArrow withinPortal>
-                  <Menu.Target>
-                    <ActionIcon variant="subtle" color="dark" size="sm">
-                      <IconDotsVertical />
-                    </ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Item
-                      onClick={() => {
-                        console.log("비밀번호 입력");
-                      }}
-                    >
-                      <Text fz="1.5rem">수정</Text>
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => {
-                        console.log("비밀번호 입력");
-                      }}
-                    >
-                      <Text fz="1.5rem">삭제</Text>
-                    </Menu.Item>
-                  </Menu.Dropdown>
-                </Menu>
-              </Flex>
-              <Text size="sm">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text
-              </Text>
-            </Flex>
-            <Flex justify="space-between" align="center">
-              <ButtonGroup>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconHeart />}
-                  color="dark"
-                >
-                  12
-                </Button>
-                <Button
-                  size="xs"
-                  variant="subtle"
-                  leftSection={<IconMessage2 />}
-                  color="dark"
-                  onClick={() => {
-                    console.log("답글 폼 표시");
-                  }}
-                >
-                  답글
-                </Button>
-              </ButtonGroup>
-              <Text ta="end">2024-11-29 13:57</Text>
-            </Flex>
-          </Flex>
-        </Paper>
         <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="2rem" />
           <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
+            <Flex direction="column" gap="xs">
+              <Flex direction="column">
+                <Flex w="100%" justify="space-between">
+                  <Text fw={600}>닉네임1</Text>
+                  <Menu shadow="md" withArrow withinPortal>
+                    <Menu.Target>
+                      <ActionIcon variant="subtle" color="dark" size="sm">
+                        <IconDotsVertical />
+                      </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item
+                        onClick={() => {
+                          console.log("비밀번호 입력");
+                        }}
+                      >
+                        <Text fz="1.5rem">수정</Text>
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => {
+                          console.log("비밀번호 입력");
+                        }}
+                      >
+                        <Text fz="1.5rem">삭제</Text>
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                </Flex>
+                <Text size="sm">
+                  Lorem Ipsum is simply dummy text of the printing and
+                  typesetting industry. Lorem Ipsum has been the industry's
+                  standard dummy text
+                </Text>
+              </Flex>
+              <Flex justify="space-between" align="center">
+                <ButtonGroup>
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    leftSection={<IconHeart />}
+                    color="dark"
+                  >
+                    12
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    leftSection={<IconMessage2 />}
+                    color="dark"
+                    onClick={() => {
+                      console.log("답글 폼 표시");
+                    }}
+                  >
+                    답글
+                  </Button>
+                </ButtonGroup>
+                <Text ta="end">2024-11-29 13:57</Text>
+              </Flex>
+            </Flex>
+          </Paper>
+        </Flex>
+        <Flex gap="xs" w="100%">
+          <IconCornerDownRight size="1.5rem" />
+          <Paper w="100%" shadow="md" p="xs" radius="md" bg="cyan.4">
             <Flex direction="column" gap="xs">
               <Flex direction="column">
                 <Flex w="100%" justify="space-between">
@@ -292,13 +294,13 @@ const MemoViewPage = () => {
         </Flex>
         {/* 답글 버튼 클릭 시 표시 */}
         <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="1rem" />
+          <IconCornerDownRight size="1.5rem" />
           {CommentForm()}
         </Flex>
         {/* -------------------------------------------- */}
         <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="2rem" />
-          <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
+          <IconCornerDownRight size="1.5rem" />
+          <Paper w="100%" shadow="md" p="xs" radius="md" bg="cyan.4">
             <Flex direction="column" gap="xs">
               <Flex direction="column">
                 <Flex w="100%" justify="space-between">
