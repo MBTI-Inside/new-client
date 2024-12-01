@@ -128,7 +128,7 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
       {isReply && (
         <Flex gap="xs" w="100%">
           <IconCornerDownRight size="1.5rem" />
-          {CommentForm()}
+          <CommentForm memoId={comment.memoId} />
         </Flex>
       )}
     </Fragment>

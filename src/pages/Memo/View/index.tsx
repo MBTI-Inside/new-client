@@ -173,7 +173,7 @@ const MemoViewPage = () => {
             );
           })}
       </Flex>
-      {CommentForm()}
+      <CommentForm memoId={id} />
     </Flex>
   );
 };

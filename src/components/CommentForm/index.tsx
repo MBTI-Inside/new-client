@@ -6,8 +6,24 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 
-export const CommentForm = () => {
+interface CommentFormProps {
+  memoId: string;
+  id?: string;
+}
+
+export const CommentForm = ({ memoId, id }: CommentFormProps) => {
+  console.log(memoId, id);
+  const form = useForm({
+    initialValues: {
+      nickName: "",
+      content: "",
+      password: "",
+    },
+  });
+
+  // 댓글 입력은 창이 협소하므로 유효성 검사 이후 문제 있으면 notification 표시할 것
   return (
     <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
       <Flex direction="column" gap="xs">
