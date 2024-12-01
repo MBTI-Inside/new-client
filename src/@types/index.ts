@@ -1,5 +1,6 @@
 import { Fit, MBTI } from "@/@types/MBTI";
 import { MemoPost, MemoLikeResponse } from "@/@types/Memo";
+import { CommentPost, CommentLikeResponse } from "@/@types/Comment";
 import {
   MBTIProportion,
   MBTIProportions,
@@ -14,6 +15,8 @@ export interface CommonResponse {
 }
 
 export type {
+  CommentPost,
+  CommentLikeResponse,
   MemoPost,
   MemoLikeResponse,
   Question,
