@@ -1,4 +1,4 @@
-import { MemoLikeResponse, MemoPost } from "@/@types";
+import { CommentPost, MemoLikeResponse, MemoPost } from "@/@types";
 import axiosRequest from "@/api";
 import { CommentCard } from "@/components/CommentCard";
 import { CommentForm } from "@/components/CommentForm";
@@ -34,6 +34,14 @@ const MemoViewPage = () => {
     method: "get",
     url: `/memos/${id}`,
     queryFn: () => axiosRequest.requestAxios<MemoPost>("get", `/memos/${id}`),
+    enabled: !!id,
+  });
+
+  const { data: comments } = useCustomQuery(["get-memo", "get-comments"], {
+    method: "get",
+    url: `/comments/${id}`,
+    queryFn: () =>
+      axiosRequest.requestAxios<CommentPost[]>("get", `/comments/${id}`),
     enabled: !!id,
   });
 
@@ -146,24 +154,24 @@ const MemoViewPage = () => {
           <Text fz="lg">[{memo?.cmtCount}]</Text>
         </Flex>
         {!memo?.cmtCount && <Text>댓글이 존재하지 않습니다.</Text>}
-        <Flex gap="xs" w="100%">
-          {CommentCard()}
-        </Flex>
-        <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="1.5rem" />
-          {CommentCard()}
-        </Flex>
-        {/* 답글 버튼 클릭 시 표시 */}
-        <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="1.5rem" />
-          {CommentForm()}
-        </Flex>
-        {/* -------------------------------------------- */}
-        <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="1.5rem" />
-          {CommentCard()}
-        </Flex>
-        {CommentCard()}
+        {comments &&
+          comments.map((comment) => {
+            if (comment.parentCommentId) {
+              return (
+                <Flex gap="xs" w="100%" key={comment._id}>
+                  <IconCornerDownRight size="1.5rem" />
+                  <Flex direction="column" gap="xs" w="100%">
+                    <CommentCard comment={comment} />
+                  </Flex>
+                </Flex>
+              );
+            }
+            return (
+              <Flex direction="column" gap="xs" w="100%" key={comment._id}>
+                <CommentCard comment={comment} />
+              </Flex>
+            );
+          })}
       </Flex>
       {CommentForm()}
     </Flex>
