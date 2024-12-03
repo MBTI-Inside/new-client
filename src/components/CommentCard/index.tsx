@@ -16,7 +16,7 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { Fragment, useState } from "react";
-import { CommentForm } from "../CommentForm";
+import { CommentForm } from "@/components/CommentForm";
 import { notifications } from "@mantine/notifications";
 import { useHandleError } from "@/hooks/useHandleError";
 import useCustomMutation from "@/hooks/useCustomMutation";
@@ -128,7 +128,11 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
       {isReply && (
         <Flex gap="xs" w="100%">
           <IconCornerDownRight size="1.5rem" />
-          <CommentForm memoId={comment.memoId} />
+          <CommentForm
+            memoId={comment.memoId}
+            parentCommentId={comment._id}
+            onSubmit={() => setIsReply(false)}
+          />
         </Flex>
       )}
     </Fragment>
