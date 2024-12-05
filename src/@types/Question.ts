@@ -1,11 +1,12 @@
-import { CommonResponse } from '.';
+export type MBTIType = "energy" | "awareness" | "judgement" | "life";
 
-export type MBTIType = 'energy' | 'awareness' | 'judgement' | 'life';
-
-export interface Question extends CommonResponse {
+export interface Question {
+  _id: string;
   subject: string;
   answer: Answer[];
   mbtiType: MBTIType;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Answer {
