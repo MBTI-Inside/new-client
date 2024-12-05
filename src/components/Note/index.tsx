@@ -183,6 +183,7 @@ export const Note = ({ id }: NoteProps) => {
             message: `메모가 ${!id ? "작성" : "수정"}되었어요! 🌟`,
             color: "green",
           });
+          form.reset();
           closeModal(data);
         },
         onError: (error) => {
