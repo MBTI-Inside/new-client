@@ -15,10 +15,10 @@ function App() {
   return (
     <BrowserRouter>
       <MantineProvider theme={globalTheme} withGlobalClasses withStaticClasses>
-        <ModalStackManager>
-          <Notifications />
+        <Suspense fallback={<Loader />}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Suspense fallback={<Loader />}>
+            <ModalStackManager>
+              <Notifications />
               <Layout>
                 <Routes>
                   {routePaths.map((route) => (
@@ -30,9 +30,9 @@ function App() {
                   ))}
                 </Routes>
               </Layout>
-            </Suspense>
+            </ModalStackManager>
           </ErrorBoundary>
-        </ModalStackManager>
+        </Suspense>
       </MantineProvider>
     </BrowserRouter>
   );
