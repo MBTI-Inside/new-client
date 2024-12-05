@@ -83,7 +83,7 @@ export const Note = ({ id }: NoteProps) => {
         judgement: judgement || initialJudgement,
         life: life || initialLife,
       },
-      cardColor: findColorArray(memo?.cardColor)?.[6] ?? "#FFFFFF",
+      cardColor: findColorArray(memo?.cardColor)?.[6] || randomColor,
     },
   });
 
