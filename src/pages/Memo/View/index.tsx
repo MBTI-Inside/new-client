@@ -29,6 +29,31 @@ import {
   IconHeart,
   IconMessage2,
 } from "@tabler/icons-react";
+import { Fragment } from "react/jsx-runtime";
+
+const buildCommentTree = (comments: CommentPost[]) => {
+  const commentMap: Record<string, CommentPost & { children: CommentPost[] }> =
+    {};
+  const tree: CommentPost[] = [];
+
+  // 데이터 맵으로 변환
+  comments.forEach((comment) => {
+    commentMap[comment._id] = { ...comment, children: [] };
+  });
+
+  // 트리 구조 생성
+  comments.forEach((comment) => {
+    if (comment.parentCommentId) {
+      commentMap[comment.parentCommentId]?.children.push(
+        commentMap[comment._id]
+      );
+    } else {
+      tree.push(commentMap[comment._id]);
+    }
+  });
+
+  return tree;
+};
 
 const MemoViewPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
@@ -55,7 +80,8 @@ const MemoViewPage = () => {
   );
 
   const bgColor = findColorArray(memo?.cardColor);
-
+  const commentTreeData = buildCommentTree(comments ?? []);
+  console.log(commentTreeData);
   const { mutate: likeMutate } = useCustomMutation<MemoLikeResponse>(
     ["get-memo", "get-comments"],
     {
@@ -289,19 +315,32 @@ const MemoViewPage = () => {
           <Text fz="lg">[{memo?.cmtCount}]</Text>
         </Flex>
         {!memo?.cmtCount && <Text>댓글이 존재하지 않습니다.</Text>}
-        {comments &&
-          comments.map((comment) => {
-            if (comment.parentCommentId) {
+        {commentTreeData &&
+          commentTreeData.map((comment) => {
+            if (!comment.parentCommentId) {
               return (
-                <Flex gap="xs" w="100%" key={comment._id}>
-                  <IconCornerDownRight size="1.5rem" />
-                  <Flex direction="column" gap="xs" w="100%">
+                <Fragment>
+                  <Flex direction="column" gap="xs" w="100%" key={comment._id}>
                     <CommentCard
                       comment={comment}
                       bgColor={bgColor?.[4] ?? "#FFFFF"}
                     />
                   </Flex>
-                </Flex>
+                  {comment.children &&
+                    comment.children.map((childComment) => {
+                      return (
+                        <Flex gap="xs" w="100%" key={childComment._id}>
+                          <IconCornerDownRight size="1.5rem" />
+                          <Flex direction="column" gap="xs" w="100%">
+                            <CommentCard
+                              comment={childComment}
+                              bgColor={bgColor?.[4] ?? "#FFFFF"}
+                            />
+                          </Flex>
+                        </Flex>
+                      );
+                    })}
+                </Fragment>
               );
             }
             return (

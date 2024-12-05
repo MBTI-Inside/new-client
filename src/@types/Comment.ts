@@ -2,6 +2,7 @@ export interface CommentPost {
   _id: string;
   memoId: string;
   parentCommentId: string;
+  children?: CommentPost[];
   nickName: string;
   content: string;
   likeCount: number;
