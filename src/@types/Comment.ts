@@ -1,7 +1,7 @@
 export interface CommentPost {
   _id: string;
   memoId: string;
-  parentCommentId: string;
+  parentCommentId: string | null;
   children?: CommentPost[];
   nickName: string;
   content: string;
