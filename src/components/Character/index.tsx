@@ -1,5 +1,5 @@
 import { themeColor } from "@/styles/color";
-import { Flex, MantineThemeOverride } from "@mantine/core";
+import { Flex } from "@mantine/core";
 
 export const Character = () => {
   return (

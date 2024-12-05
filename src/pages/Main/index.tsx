@@ -1,6 +1,6 @@
 import Character from "@/components/Character";
 import useRouter from "@/hooks/useRouter";
-import { Button, Flex, Text, Title } from "@mantine/core";
+import { Button, Flex, Text } from "@mantine/core";
 
 const MainPage = () => {
   const { navigateTo } = useRouter();

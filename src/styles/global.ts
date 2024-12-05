@@ -1,4 +1,4 @@
-import { AppShell, MantineTheme } from "@mantine/core";
+import { MantineTheme } from "@mantine/core";
 
 export const globalTheme = {
   components: {
@@ -13,7 +13,7 @@ export const globalTheme = {
       }),
     },
     Button: {
-      styles: (theme: MantineTheme) => ({
+      styles: () => ({
         root: {
           outline: "none",
         },
