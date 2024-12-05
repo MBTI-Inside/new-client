@@ -13,7 +13,6 @@ import { MemoCard } from "@/components/MemoCard";
 const MemoPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
   const { openModal } = useModal();
-
   const [limit] = useState(5);
 
   const {
@@ -21,6 +20,7 @@ const MemoPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery(
     ["get-memos"],
     ({ pageParam: skip }) =>
@@ -65,7 +65,11 @@ const MemoPage = () => {
             radius="100%"
             size="4rem"
             onClick={() => {
-              openModal(<Note />, null, "메모 작성");
+              openModal(<Note />, null, "메모 작성").then((result) => {
+                if (result) {
+                  refetch();
+                }
+              });
             }}
           >
             <IconPlus size="2rem" />

@@ -68,7 +68,9 @@ export const MemoCard = ({ memo }: MemoCardProps) => {
           <Flex
             direction="column"
             gap="xs"
-            onClick={() => navigateTo(`/memo/${memo._id}`)}
+            onClick={() => {
+              if (memo._id) navigateTo(`/memo/${memo._id}`);
+            }}
           >
             <Group justify="space-between">
               <Text fw={600}>{memo.title}</Text>

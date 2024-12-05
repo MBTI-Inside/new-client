@@ -29,6 +29,7 @@ import {
   IconHeart,
   IconMessage2,
 } from "@tabler/icons-react";
+import { useEffect } from "react";
 import { Fragment } from "react/jsx-runtime";
 
 const buildCommentTree = (comments: CommentPost[]) => {
@@ -56,11 +57,17 @@ const buildCommentTree = (comments: CommentPost[]) => {
 };
 
 const MemoViewPage = () => {
-  const setError = useHandleError(); // 에러 핸들링 함수
-  const { openModal, closeModal } = useModal();
   const { navigateTo, goBack, params } = useRouter();
   const { id } = params as { id: string };
+  useEffect(() => {
+    if (!id) {
+      console.error("ID is missing.");
+      return;
+    }
+  }, [id]);
 
+  const setError = useHandleError(); // 에러 핸들링 함수
+  const { openModal, closeModal } = useModal();
   const { data: memo, refetch: memoRefetch } = useCustomQuery(["get-memo"], {
     method: "get",
     url: `/memos/${id}`,
@@ -81,7 +88,7 @@ const MemoViewPage = () => {
 
   const bgColor = findColorArray(memo?.cardColor);
   const commentTreeData = buildCommentTree(comments ?? []);
-  console.log(commentTreeData);
+
   const { mutate: likeMutate } = useCustomMutation<MemoLikeResponse>(
     ["get-memo", "get-comments"],
     {
@@ -335,6 +342,10 @@ const MemoViewPage = () => {
                             <CommentCard
                               comment={childComment}
                               bgColor={bgColor?.[4] ?? "#FFFFF"}
+                              onSubmit={() => {
+                                memoRefetch();
+                                commentsRefetch();
+                              }}
                             />
                           </Flex>
                         </Flex>
@@ -348,12 +359,23 @@ const MemoViewPage = () => {
                 <CommentCard
                   comment={comment}
                   bgColor={bgColor?.[4] ?? "#FFFFF"}
+                  onSubmit={() => {
+                    memoRefetch();
+                    commentsRefetch();
+                  }}
                 />
               </Flex>
             );
           })}
       </Flex>
-      <CommentForm memoId={id} bgColor={bgColor?.[4] ?? "#FFFFF"} />
+      <CommentForm
+        memoId={id}
+        bgColor={bgColor?.[4] ?? "#FFFFF"}
+        onSubmit={() => {
+          memoRefetch();
+          commentsRefetch();
+        }}
+      />
     </Flex>
   );
 };

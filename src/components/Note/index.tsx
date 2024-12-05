@@ -64,7 +64,7 @@ export const Note = ({ id }: NoteProps) => {
 
   const [energy, awareness, judgement, life] = memo?.mbtiType.split("") ?? [];
   const { mutate } = useCustomMutation(
-    [...(id ? ["get-memo", "get-comments"] : ["get-memos"])],
+    ["get-memos", "get-memo", "get-comments"],
     {
       method: info.method as "patch" | "post",
     }
@@ -73,17 +73,17 @@ export const Note = ({ id }: NoteProps) => {
   const form = useForm({
     validateInputOnChange: true,
     initialValues: {
-      title: memo?.title || "",
-      content: memo?.content || "",
+      title: id ? memo?.title : "",
+      content: id ? memo?.content : "",
       password: "",
-      nickName: memo?.nickName || "",
+      nickName: id ? memo?.nickName : "",
       mbtiType: {
-        energy: energy || initialEnergy,
-        awareness: awareness || initialAwareness,
-        judgement: judgement || initialJudgement,
-        life: life || initialLife,
+        energy: id ? energy : initialEnergy,
+        awareness: id ? awareness : initialAwareness,
+        judgement: id ? judgement : initialJudgement,
+        life: id ? life : initialLife,
       },
-      cardColor: findColorArray(memo?.cardColor)?.[6] || randomColor,
+      cardColor: id ? findColorArray(memo?.cardColor)?.[6] : randomColor,
     },
   });
 
