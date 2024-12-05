@@ -14,6 +14,7 @@ import { IconHeart, IconMessage2 } from "@tabler/icons-react";
 import useCustomMutation from "@/hooks/useCustomMutation";
 import { useHandleError } from "@/hooks/useHandleError";
 import { notifications } from "@mantine/notifications";
+import { findColorArray } from "@/utils/findColor";
 
 interface MemoCardProps {
   memo?: MemoPost;
@@ -22,6 +23,7 @@ interface MemoCardProps {
 export const MemoCard = ({ memo }: MemoCardProps) => {
   const setError = useHandleError(); // 에러 핸들링 함수
   const { navigateTo } = useRouter();
+  const bgColor = findColorArray(memo?.cardColor);
 
   const { mutate } = useCustomMutation<MemoLikeResponse>(["get-memos"], {
     method: "patch",
@@ -61,18 +63,18 @@ export const MemoCard = ({ memo }: MemoCardProps) => {
 
   return (
     memo && (
-      <Card shadow="sm" padding="lg" radius="md" bg="cyan.4" h="12rem">
+      <Card shadow="sm" padding="md" radius="md" bg={bgColor?.[4]} h="12rem">
         <Flex direction="column" gap="sm" justify="space-between" h="100%">
           <Flex
             direction="column"
-            gap="md"
+            gap="xs"
             onClick={() => navigateTo(`/memo/${memo._id}`)}
           >
             <Group justify="space-between">
               <Text fw={600}>{memo.title}</Text>
               <Badge color="dark">{memo.mbtiType}</Badge>
             </Group>
-            <Text size="md" lineClamp={3} h="4.5rem">
+            <Text size="md" lineClamp={3} h="4rem">
               {memo.content}
             </Text>
           </Flex>
@@ -96,9 +98,12 @@ export const MemoCard = ({ memo }: MemoCardProps) => {
                 {memo.cmtCount}
               </Button>
             </ButtonGroup>
-            <Text ta="end">
-              {dayjs(memo.createdAt).format("YYYY-MM-DD HH:mm").toString()}
-            </Text>
+            <Flex direction="column" justify="flex-end" align="flex-end">
+              <Text>{memo.nickName}</Text>
+              <Text>
+                {dayjs(memo.createdAt).format("YYYY-MM-DD HH:mm").toString()}
+              </Text>
+            </Flex>
           </Flex>
         </Flex>
       </Card>

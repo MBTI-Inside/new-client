@@ -2,10 +2,15 @@ import { CommentPost, MemoLikeResponse, MemoPost } from "@/@types";
 import axiosRequest from "@/api";
 import { CommentCard } from "@/components/CommentCard";
 import { CommentForm } from "@/components/CommentForm";
+import { Confirm } from "@/components/Confirm";
+import { Note } from "@/components/Note";
+import { PasswordForm } from "@/components/PasswordForm";
 import useCustomMutation from "@/hooks/useCustomMutation";
 import useCustomQuery from "@/hooks/useCustomQuery";
 import { useHandleError } from "@/hooks/useHandleError";
+import { useModal } from "@/hooks/useModal";
 import useRouter from "@/hooks/useRouter";
+import { findColorArray } from "@/utils/findColor";
 import {
   ActionIcon,
   Button,
@@ -27,30 +32,47 @@ import {
 
 const MemoViewPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
-  const { goBack, params } = useRouter();
+  const { openModal, closeModal } = useModal();
+  const { navigateTo, goBack, params } = useRouter();
   const { id } = params as { id: string };
 
-  const { data: memo } = useCustomQuery(["get-memo"], {
+  const { data: memo, refetch: memoRefetch } = useCustomQuery(["get-memo"], {
     method: "get",
     url: `/memos/${id}`,
     queryFn: () => axiosRequest.requestAxios<MemoPost>("get", `/memos/${id}`),
     enabled: !!id,
   });
 
-  const { data: comments } = useCustomQuery(["get-memo", "get-comments"], {
-    method: "get",
-    url: `/comments/${id}`,
-    queryFn: () =>
-      axiosRequest.requestAxios<CommentPost[]>("get", `/comments/${id}`),
-    enabled: !!id,
+  const { data: comments, refetch: commentsRefetch } = useCustomQuery(
+    ["get-memo", "get-comments"],
+    {
+      method: "get",
+      url: `/comments/${id}`,
+      queryFn: () =>
+        axiosRequest.requestAxios<CommentPost[]>("get", `/comments/${id}`),
+      enabled: !!id,
+    }
+  );
+
+  const bgColor = findColorArray(memo?.cardColor);
+
+  const { mutate: likeMutate } = useCustomMutation<MemoLikeResponse>(
+    ["get-memo", "get-comments"],
+    {
+      method: "patch",
+    }
+  );
+
+  const { mutate: checkMutate } = useCustomMutation([""], {
+    method: "post",
   });
 
-  const { mutate } = useCustomMutation<MemoLikeResponse>(["get-memo"], {
-    method: "patch",
+  const { mutate: deleteMutate } = useCustomMutation(["get-memos"], {
+    method: "delete",
   });
 
   const handleClickLike = (id: string) => {
-    mutate(
+    likeMutate(
       {
         url: `/memos/${id}/like`, // 동적 URL
       },
@@ -68,6 +90,8 @@ const MemoViewPage = () => {
             message: <Text>공감이 {data.likeCount}개가 되었어요! 🥰</Text>,
             color: "blue",
           });
+          memoRefetch();
+          commentsRefetch();
         },
         onError: (error: Error) => {
           notifications.show({
@@ -81,8 +105,76 @@ const MemoViewPage = () => {
     );
   };
 
+  const handleCheckPassword = (password: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      checkMutate(
+        {
+          url: `/memos/${id}`,
+          data: {
+            password,
+          },
+        },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: "비밀번호 확인 완료",
+              message: "비밀번호 확인 완료되었습니다. 😎",
+              color: "blue",
+            });
+            resolve(true); // 성공 시 true 반환
+          },
+          onError: (error: Error) => {
+            notifications.show({
+              title: "비밀번호 확인 실패",
+              message: "비밀번호가 일치하지 않아요. 😥",
+              color: "red",
+            });
+            setError(error);
+            reject(false); // 실패 시 false 반환
+          },
+        }
+      );
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    return new Promise((resolve, reject) => {
+      deleteMutate(
+        {
+          url: `/memos/${id}`,
+        },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: "메모 삭제 완료",
+              message: "메모가 삭제되었습니다. 😀",
+              color: "blue",
+            });
+            resolve(true); // 성공 시 true 반환
+          },
+          onError: (error: Error) => {
+            notifications.show({
+              title: "메모 삭제 실패",
+              message: "메모가 삭제되지 않았어요. 😥",
+              color: "red",
+            });
+            setError(error);
+            reject(false); // 실패 시 false 반환
+          },
+        }
+      );
+    });
+  };
+
   return (
-    <Flex direction="column" w="100%" h="100%" bg="cyan" p="md" gap="md">
+    <Flex
+      direction="column"
+      w="100%"
+      h="100%"
+      bg={bgColor?.[6] ?? "#FFFFF"}
+      p="md"
+      gap="md"
+    >
       <Flex justify="space-between" align="center">
         <ActionIcon variant="subtle" color="dark" onClick={() => goBack()}>
           <IconArrowLeft />
@@ -97,14 +189,57 @@ const MemoViewPage = () => {
           <Menu.Dropdown>
             <Menu.Item
               onClick={() => {
-                console.log("비밀번호 입력");
+                openModal(<PasswordForm />, null, "비밀번호 입력").then(
+                  async (password) => {
+                    const result = await handleCheckPassword(
+                      password as string
+                    );
+
+                    if (result) {
+                      openModal(<Note id={id} />, null, "메모 수정", true).then(
+                        (result) => {
+                          if (result) {
+                            memoRefetch();
+                            commentsRefetch();
+                          }
+                        }
+                      );
+                    }
+                  }
+                ); // 비밀번호 검증
               }}
             >
               <Text fz="1.5rem">수정</Text>
             </Menu.Item>
             <Menu.Item
               onClick={() => {
-                console.log("비밀번호 입력");
+                openModal(<PasswordForm />, null, "비밀번호 입력").then(
+                  async (password) => {
+                    const result = await handleCheckPassword(
+                      password as string
+                    );
+
+                    if (result) {
+                      openModal(
+                        <Confirm
+                          message={<Text>정말로 삭제하시겠어요? 😢</Text>}
+                          yesCallback={async () => {
+                            const result = await handleDelete(id);
+
+                            if (result) {
+                              navigateTo("/memo");
+                              // TODO: goBack으로도 충분한지 확인 필요
+                            }
+                          }}
+                          commonCallback={() => closeModal(null)}
+                        />,
+                        null,
+                        "메모 삭제",
+                        true
+                      );
+                    }
+                  }
+                ); // 비밀번호 검증
               }}
             >
               <Text fz="1.5rem">삭제</Text>
@@ -117,7 +252,7 @@ const MemoViewPage = () => {
           shadow="sm"
           padding="lg"
           radius="md"
-          bg="cyan.4"
+          bg={bgColor?.[4] ?? "#FFFFF"}
           w="100%"
           h="100%"
         >
@@ -126,7 +261,7 @@ const MemoViewPage = () => {
               <Group justify="space-between">
                 <Text fw={600}>{memo?.title}</Text>
               </Group>
-              <Text size="md" h="20rem">
+              <Text size="md" h="24rem">
                 {memo?.content}
               </Text>
             </Flex>
@@ -161,19 +296,25 @@ const MemoViewPage = () => {
                 <Flex gap="xs" w="100%" key={comment._id}>
                   <IconCornerDownRight size="1.5rem" />
                   <Flex direction="column" gap="xs" w="100%">
-                    <CommentCard comment={comment} />
+                    <CommentCard
+                      comment={comment}
+                      bgColor={bgColor?.[4] ?? "#FFFFF"}
+                    />
                   </Flex>
                 </Flex>
               );
             }
             return (
               <Flex direction="column" gap="xs" w="100%" key={comment._id}>
-                <CommentCard comment={comment} />
+                <CommentCard
+                  comment={comment}
+                  bgColor={bgColor?.[4] ?? "#FFFFF"}
+                />
               </Flex>
             );
           })}
       </Flex>
-      <CommentForm memoId={id} />
+      <CommentForm memoId={id} bgColor={bgColor?.[4] ?? "#FFFFF"} />
     </Flex>
   );
 };
