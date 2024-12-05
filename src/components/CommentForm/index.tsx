@@ -3,54 +3,59 @@ import axiosRequest from "@/api";
 import useCustomMutation from "@/hooks/useCustomMutation";
 import useCustomQuery from "@/hooks/useCustomQuery";
 import { useHandleError } from "@/hooks/useHandleError";
+import { useModal } from "@/hooks/useModal";
 import {
   Button,
   Flex,
-  Paper,
   PasswordInput,
   Textarea,
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { Dispatch, SetStateAction } from "react";
 
 interface CommentFormProps {
   memoId: string;
   parentCommentId?: string | null;
   id?: string;
-  onSubmit?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const CommentForm = ({
   memoId,
   parentCommentId,
   id,
-  onSubmit,
 }: CommentFormProps) => {
   const setError = useHandleError(); // 에러 핸들링 함수
+  const { closeModal } = useModal();
   const info = {
     method: id ? "patch" : "post",
     url: id ? `/comments/${id}` : `/comments/${memoId}`,
   };
 
-  const { data: comment } = useCustomQuery(["get-comment"], {
-    method: "get",
-    url: `/comments/id/${id}`,
-    queryFn: () =>
-      axiosRequest.requestAxios<CommentPost>("get", `/comments/id/${id}`),
-    enabled: !!id,
-  });
+  const { data: comment } = useCustomQuery(
+    ["get-comment", memoId, id as string],
+    {
+      method: "get",
+      url: `/comments/id/${id}`,
+      queryFn: () =>
+        axiosRequest.requestAxios<CommentPost>("get", `/comments/id/${id}`),
+      enabled: !!id,
+      options: {
+        suspense: !!id, // id가 있을 때만 Suspense 활성화
+      },
+    }
+  );
 
   const { mutate } = useCustomMutation(["get-memo", "get-comments"], {
     method: info.method as "patch" | "post",
   });
 
   const form = useForm({
+    validateInputOnChange: true,
     initialValues: {
-      nickName: "",
+      nickName: id ? comment?.nickName : "",
       parentCommentId: parentCommentId || null,
-      content: "",
+      content: id ? comment?.content : "",
       password: "",
     },
   });
@@ -127,11 +132,11 @@ export const CommentForm = ({
           notifications.show({
             title: `댓글 ${!id ? "작성" : "수정"} 성공`,
             message: `댓글이 ${!id ? "작성" : "수정"}되었어요! 🌟`,
-            color: "green",
+            color: "blue",
           });
 
-          if (onSubmit) onSubmit(false);
           form.reset();
+          closeModal(data);
         },
         onError: (error) => {
           notifications.show({
@@ -147,30 +152,23 @@ export const CommentForm = ({
 
   // 댓글 입력은 창이 협소하므로 유효성 검사 이후 문제 있으면 notification 표시할 것
   return (
-    <Paper shadow="md" p="xs" radius="md" bg="cyan.4">
-      <Flex direction="column" gap="xs">
-        <Flex gap="xs" w="100%" align="center">
-          <TextInput
-            w="50%"
-            size="sm"
-            placeholder="닉네임"
-            {...form.getInputProps("nickName")}
-          />
-          <PasswordInput
-            size="sm"
-            w="100%"
-            placeholder="비밀번호"
-            {...form.getInputProps("password")}
-          />
-          <Button w="30%" size="sm" onClick={() => handleSubmit()}>
-            등록
-          </Button>
-        </Flex>
-        <Textarea
-          placeholder="댓글을 입력해 주세요."
-          {...form.getInputProps("content")}
-        />
-      </Flex>
-    </Paper>
+    <Flex direction="column" gap="xs" p="xs">
+      <TextInput
+        w="100%"
+        placeholder="닉네임"
+        {...form.getInputProps("nickName")}
+      />
+      <PasswordInput
+        size="sm"
+        w="100%"
+        placeholder="비밀번호"
+        {...form.getInputProps("password")}
+      />
+      <Textarea
+        placeholder="댓글을 입력해 주세요."
+        {...form.getInputProps("content")}
+      />
+      <Button onClick={() => handleSubmit()}>등록</Button>
+    </Flex>
   );
 };

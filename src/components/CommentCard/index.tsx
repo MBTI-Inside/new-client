@@ -8,36 +8,51 @@ import {
   Button,
   Text,
 } from "@mantine/core";
-import {
-  IconCornerDownRight,
-  IconDotsVertical,
-  IconHeart,
-  IconMessage2,
-} from "@tabler/icons-react";
+import { IconDotsVertical, IconHeart, IconMessage2 } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import { CommentForm } from "@/components/CommentForm";
 import { notifications } from "@mantine/notifications";
 import { useHandleError } from "@/hooks/useHandleError";
 import useCustomMutation from "@/hooks/useCustomMutation";
+import { PasswordForm } from "../PasswordForm";
+import { useModal } from "@/hooks/useModal";
+import { Confirm } from "../Confirm";
 
 interface CommentCardProps {
   comment: CommentPost;
+  bgColor: string;
+  onSubmit?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CommentCard = ({ comment }: CommentCardProps) => {
+export const CommentCard = ({
+  comment,
+  bgColor,
+  onSubmit,
+}: CommentCardProps) => {
   const setError = useHandleError(); // 에러 핸들링 함수
-  const [isReply, setIsReply] = useState(false);
+  const { openModal, closeModal } = useModal();
 
-  const { mutate } = useCustomMutation<CommentLikeResponse>(
+  const { mutate: likeMutate } = useCustomMutation<CommentLikeResponse>(
     ["get-memo", "get-comments"],
     {
       method: "patch",
     }
   );
 
+  const { mutate: checkMutate } = useCustomMutation([""], {
+    method: "post",
+  });
+
+  const { mutate: deleteMutate } = useCustomMutation(
+    ["get-memo", "get-comments"],
+    {
+      method: "delete",
+    }
+  );
+
   const handleClickLike = (id: string) => {
-    mutate(
+    likeMutate(
       {
         url: `/comments/${id}/like`, // 동적 URL
       },
@@ -61,9 +76,73 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
     );
   };
 
+  const handleCheckPassword = (id: string, password: string) => {
+    return new Promise((resolve, reject) => {
+      checkMutate(
+        {
+          url: `/comments/id/${id}`,
+          data: {
+            password,
+          },
+        },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: "비밀번호 확인 완료",
+              message: "비밀번호 확인 완료되었습니다. 😎",
+              color: "blue",
+            });
+            resolve(true); // 성공 시 true 반환
+          },
+          onError: (error: Error) => {
+            notifications.show({
+              title: "비밀번호 확인 실패",
+              message: "비밀번호가 일치하지 않아요. 😥",
+              color: "red",
+            });
+            setError(error);
+            reject(false); // 실패 시 false 반환
+          },
+        }
+      );
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    return new Promise((resolve, reject) => {
+      deleteMutate(
+        {
+          url: `/comments/${id}`,
+          data: {
+            memoId: comment.memoId,
+          },
+        },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: <Text>댓글 삭제 완료</Text>,
+              message: <Text>댓글이 삭제되었습니다. 😀</Text>,
+              color: "blue",
+            });
+            resolve(true); // 성공 시 true 반환
+          },
+          onError: (error: Error) => {
+            notifications.show({
+              title: "댓글 삭제 실패",
+              message: "댓글 삭제 중 오류가 발생했어요. 😥",
+              color: "red",
+            });
+            setError(error);
+            reject(false); // 실패 시 false 반환
+          },
+        }
+      );
+    });
+  };
+
   return (
     <Fragment>
-      <Paper w="100%" shadow="md" p="xs" radius="md" bg="cyan.4">
+      <Paper w="100%" shadow="md" p="xs" radius="md" bg={bgColor}>
         <Flex direction="column" gap="xs">
           <Flex direction="column">
             <Flex w="100%" justify="space-between">
@@ -77,14 +156,64 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
                 <Menu.Dropdown>
                   <Menu.Item
                     onClick={() => {
-                      console.log("비밀번호 입력");
+                      openModal(<PasswordForm />, null, "비밀번호 입력").then(
+                        async (password) => {
+                          const result = await handleCheckPassword(
+                            comment._id,
+                            password as string
+                          );
+
+                          if (result) {
+                            openModal(
+                              <CommentForm
+                                id={comment._id}
+                                memoId={comment.memoId}
+                              />,
+                              null,
+                              "댓글 수정",
+                              true
+                            ).then((result) => {
+                              if (result && onSubmit) {
+                                onSubmit(true);
+                              }
+                            });
+                          }
+                        }
+                      ); // 비밀번호 검증
                     }}
                   >
                     <Text fz="1.5rem">수정</Text>
                   </Menu.Item>
                   <Menu.Item
                     onClick={() => {
-                      console.log("비밀번호 입력");
+                      openModal(<PasswordForm />, null, "비밀번호 입력").then(
+                        async (password) => {
+                          const result = await handleCheckPassword(
+                            comment._id,
+                            password as string
+                          );
+
+                          if (result) {
+                            openModal(
+                              <Confirm
+                                message="정말로 삭제하시겠어요? 😢"
+                                yesCallback={async () => {
+                                  const result = await handleDelete(
+                                    comment._id
+                                  );
+                                  if (result && onSubmit) {
+                                    onSubmit(true);
+                                  }
+                                }}
+                                commonCallback={() => closeModal(null)}
+                              />,
+                              null,
+                              "메모 삭제",
+                              true
+                            );
+                          }
+                        }
+                      ); // 비밀번호 검증
                     }}
                   >
                     <Text fz="1.5rem">삭제</Text>
@@ -112,10 +241,18 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
                   leftSection={<IconMessage2 />}
                   color="dark"
                   onClick={() => {
-                    setIsReply((prev) => !prev);
+                    openModal(
+                      <CommentForm
+                        memoId={comment.memoId}
+                        parentCommentId={comment._id}
+                      />,
+                      null,
+                      "댓글 작성",
+                      true
+                    );
                   }}
                 >
-                  {isReply ? "답글 취소" : "답글"}
+                  답글
                 </Button>
               )}
             </ButtonGroup>
@@ -125,16 +262,6 @@ export const CommentCard = ({ comment }: CommentCardProps) => {
           </Flex>
         </Flex>
       </Paper>
-      {isReply && (
-        <Flex gap="xs" w="100%">
-          <IconCornerDownRight size="1.5rem" />
-          <CommentForm
-            memoId={comment.memoId}
-            parentCommentId={comment._id}
-            onSubmit={() => setIsReply(false)}
-          />
-        </Flex>
-      )}
     </Fragment>
   );
 };

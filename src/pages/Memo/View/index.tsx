@@ -316,21 +316,44 @@ const MemoViewPage = () => {
         </Card>
       </Flex>
       <Flex direction="column" w="100%" gap="xs">
-        <Flex w="100%" justify="flex-start" gap="xs" align="center">
-          <Text fz="lg">댓글</Text>
-          <IconMessage2 />
-          <Text fz="lg">[{memo?.cmtCount}]</Text>
+        <Flex w="100%" justify="space-between" gap="xs" align="center">
+          <Flex gap="xs">
+            <Text fz="lg">댓글</Text>
+            <IconMessage2 />
+            <Text fz="lg">[{memo?.cmtCount}]</Text>
+          </Flex>
+          <Button
+            onClick={() => {
+              openModal(
+                <CommentForm memoId={memo?._id as string} />,
+                null,
+                "댓글 작성",
+                true
+              ).then((result) => {
+                if (result) {
+                  memoRefetch();
+                  commentsRefetch();
+                }
+              });
+            }}
+          >
+            작성
+          </Button>
         </Flex>
         {!memo?.cmtCount && <Text>댓글이 존재하지 않습니다.</Text>}
         {commentTreeData &&
           commentTreeData.map((comment) => {
             if (!comment.parentCommentId) {
               return (
-                <Fragment>
+                <Fragment key={comment._id}>
                   <Flex direction="column" gap="xs" w="100%" key={comment._id}>
                     <CommentCard
                       comment={comment}
                       bgColor={bgColor?.[4] ?? "#FFFFF"}
+                      onSubmit={() => {
+                        memoRefetch();
+                        commentsRefetch();
+                      }}
                     />
                   </Flex>
                   {comment.children &&
@@ -368,14 +391,6 @@ const MemoViewPage = () => {
             );
           })}
       </Flex>
-      <CommentForm
-        memoId={id}
-        bgColor={bgColor?.[4] ?? "#FFFFF"}
-        onSubmit={() => {
-          memoRefetch();
-          commentsRefetch();
-        }}
-      />
     </Flex>
   );
 };
