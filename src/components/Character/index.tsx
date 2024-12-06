@@ -1,7 +1,15 @@
 import { themeColor } from "@/styles/color";
 import { Flex } from "@mantine/core";
 
-export const Character = () => {
+interface CharacterProps {
+  color?: string;
+  bgColor?: string;
+}
+
+export const Character = ({
+  color = "#78D9EE",
+  bgColor = themeColor.violet[2],
+}: CharacterProps) => {
   return (
     <Flex w="100%" maw={820} miw="min(340px, 100%)">
       <svg
@@ -11,26 +19,20 @@ export const Character = () => {
         style={{ width: "100%", height: "auto" }}
         preserveAspectRatio="xMidYMid meet"
       >
-        <ellipse
-          cx="210"
-          cy="401.5"
-          rx="325"
-          ry="401.5"
-          fill={themeColor.violet[2]}
-        />
+        <ellipse cx="210" cy="401.5" rx="325" ry="401.5" fill={bgColor} />
         <rect
           x="70"
           y="150"
           width="280"
           height="20"
           rx="9.71429"
-          fill="#78D9EE"
+          fill={color}
         />
-        <ellipse cx="270" cy="162" rx="53.2958" ry="51" fill="#78D9EE" />
+        <ellipse cx="270" cy="162" rx="53.2958" ry="51" fill={color} />
         <ellipse cx="270" cy="161.393" rx="38.7029" ry="37.0357" fill="black" />
         <ellipse cx="258" cy="148.036" rx="12.055" ry="11.5357" fill="white" />
         <ellipse cx="243" cy="163.821" rx="5.71027" ry="5.46429" fill="white" />
-        <ellipse cx="150" cy="162" rx="53.2958" ry="51" fill="#78D9EE" />
+        <ellipse cx="150" cy="162" rx="53.2958" ry="51" fill={color} />
         <ellipse cx="150" cy="161.393" rx="38.7029" ry="37.0357" fill="black" />
         <ellipse cx="138" cy="148.036" rx="12.055" ry="11.5357" fill="white" />
         <ellipse cx="123" cy="163.821" rx="5.71027" ry="5.46429" fill="white" />
