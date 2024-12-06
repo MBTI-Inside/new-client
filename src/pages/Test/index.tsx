@@ -32,6 +32,7 @@ interface SelectedAnswers extends Answer {
 }
 
 const TestPage = () => {
+  const { navigateTo } = useRouter();
   const [seq, setSeq] = useState(0);
   const form = useForm<{ answers: SelectedAnswers[] }>({
     initialValues: {
@@ -77,10 +78,21 @@ const TestPage = () => {
   const onSubmit = () => {
     const mbtiResult = calculateMbtiProportion(form.values.answers);
     const mbtiTypeResult = determineMBTI(mbtiResult);
-    console.log("=====Result=====");
-    console.log("mbtiResult", mbtiResult);
-    console.log("mbtiTypeResult", mbtiTypeResult);
-    console.log("TODO: mutate");
+
+    mutate(
+      {
+        url: `/mbtis/${mbtiTypeResult}`, // 동적 URL
+      },
+      {
+        onSuccess: (data) => {
+          // TODO: 로딩 좀 걸어주면 좋을 것 같은뎅..
+          navigateTo(`/result/${mbtiTypeResult}`, mbtiResult);
+        },
+        onError: (error) => {
+          throw error;
+        },
+      }
+    );
   };
 
   return (
@@ -127,7 +139,9 @@ const TestPage = () => {
                         }
                       }}
                     >
-                      {answer.content}
+                      <Text style={{ whiteSpace: "normal" }}>
+                        {answer.content}
+                      </Text>
                     </Button>
                   );
                 })}
@@ -156,6 +170,7 @@ const TestPage = () => {
                     color="teal"
                     rightSection={<IconChecklist />}
                     onClick={() => onSubmit()}
+                    disabled={form.values.answers.length !== questions.length}
                   >
                     제출
                   </Button>
