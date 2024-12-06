@@ -1,4 +1,5 @@
 export type MBTIType = "energy" | "awareness" | "judgement" | "life";
+export type MBTIElementOption = "E" | "I" | "N" | "S" | "T" | "F" | "J" | "P";
 
 export interface Question {
   _id: string;
@@ -10,7 +11,7 @@ export interface Question {
 }
 
 export interface Answer {
-  type: string;
+  type: MBTIElementOption;
   content: string;
   proportion: number;
 }
