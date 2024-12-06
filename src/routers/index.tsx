@@ -16,7 +16,7 @@ const routePaths = [
   { path: "/memo/:id", element: <MemoViewPage /> },
   { path: "/question", element: <QuestionPage /> },
   { path: "/question/:id", element: <QuestionViewPage /> },
-  { path: "/result", element: <ResultPage /> },
+  { path: "/result/:mbti", element: <ResultPage /> },
   { path: "/stats", element: <StatsPage /> },
   { path: "/test", element: <TestPage /> },
   { path: "*", element: <NotFoundPage /> },
