@@ -20,13 +20,13 @@ const MainPage = () => {
         <Text size="2.5rem" fw={700} ta="center">
           MBTI Inside
         </Text>
-        <Button size="xl" color="yellow" onClick={() => navigateTo("/test")}>
+        <Button size="xl" color="yellow.4" onClick={() => navigateTo("/test")}>
           테스트 하러가기
         </Button>
-        <Button size="xl" color="teal" onClick={() => navigateTo("/stats")}>
+        <Button size="xl" color="teal.4" onClick={() => navigateTo("/stats")}>
           유형통계 보러가기
         </Button>
-        <Button size="xl" color="cyan" onClick={() => navigateTo("/memo")}>
+        <Button size="xl" color="cyan.4" onClick={() => navigateTo("/memo")}>
           메모지 보러가기
         </Button>
       </Flex>

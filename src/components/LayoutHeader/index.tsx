@@ -39,21 +39,21 @@ export const LayoutHeader = () => {
         <Flex direction="column" gap="md">
           <Button
             size="xl"
-            color="yellow"
+            color="yellow.4"
             onClick={() => handleNavigation("/test")}
           >
             테스트 하러가기
           </Button>
           <Button
             size="xl"
-            color="teal"
+            color="teal.4"
             onClick={() => handleNavigation("/stats")}
           >
             유형통계 보러가기
           </Button>
           <Button
             size="xl"
-            color="cyan"
+            color="cyan.4"
             onClick={() => handleNavigation("/memo")}
           >
             메모지 보러가기
