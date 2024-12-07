@@ -23,11 +23,18 @@ const MainPage = () => {
         <Button size="xl" color="yellow.4" onClick={() => navigateTo("/test")}>
           테스트 하러가기
         </Button>
+        <Button
+          size="xl"
+          color="lime.4"
+          onClick={() => navigateTo("/question")}
+        >
+          문항 보러가기
+        </Button>
         <Button size="xl" color="teal.4" onClick={() => navigateTo("/stats")}>
           유형통계 보러가기
         </Button>
         <Button size="xl" color="cyan.4" onClick={() => navigateTo("/memo")}>
-          메모지 보러가기
+          메모장 보러가기
         </Button>
       </Flex>
     </Flex>

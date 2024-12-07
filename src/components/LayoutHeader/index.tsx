@@ -46,6 +46,13 @@ export const LayoutHeader = () => {
           </Button>
           <Button
             size="xl"
+            color="lime.4"
+            onClick={() => handleNavigation("/question")}
+          >
+            문항 보러가기
+          </Button>
+          <Button
+            size="xl"
             color="teal.4"
             onClick={() => handleNavigation("/stats")}
           >
@@ -56,7 +63,7 @@ export const LayoutHeader = () => {
             color="cyan.4"
             onClick={() => handleNavigation("/memo")}
           >
-            메모지 보러가기
+            메모장 보러가기
           </Button>
         </Flex>
       </Drawer>
