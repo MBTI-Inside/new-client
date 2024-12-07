@@ -168,12 +168,15 @@ const ResultPage = () => {
                       {MBTI_TYPES_VALUE[mbti]}
                     </Text>
                     <Flex gap="xs" align="center">
-                      <Text fw={700}>{normalizedState[mbti][0].rate}%</Text>
+                      <Text fw={700} w="3rem">
+                        {normalizedState[mbti][0].rate}%
+                      </Text>
                       <Progress.Root w="100%" size="2rem">
                         {normalizedState[mbti]?.map(
                           (state: { type: string; rate: number }) => {
                             return (
                               <Progress.Section
+                                key={state.type}
                                 value={state.rate}
                                 color={
                                   mbtiTypeColor[state.type as MBTIElementOption]
@@ -185,7 +188,9 @@ const ResultPage = () => {
                           }
                         )}
                       </Progress.Root>
-                      <Text fw={700}>{normalizedState[mbti][1].rate}%</Text>
+                      <Text fw={700} w="3rem">
+                        {normalizedState[mbti][1].rate}%
+                      </Text>
                     </Flex>
                   </Flex>
                 );
