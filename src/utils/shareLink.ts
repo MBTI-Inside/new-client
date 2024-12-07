@@ -14,19 +14,31 @@ export const shareLink = async (options: {
       notifications.show({
         title: "링크 공유 성공",
         message: "링크를 공유했습니다! 🌟",
-        color: "red",
+        color: "blue",
       });
     } catch (error) {
-      console.error("링크 공유에 실패했습니다.", error);
+      notifications.show({
+        title: "링크 공유 실패",
+        message: "링크 공유에 실패했습니다.",
+        color: "red",
+      });
       throw new Error("링크 공유에 실패했습니다.");
     }
   } else {
     try {
       await navigator.clipboard.writeText(url);
-      alert("링크가 복사되었습니다!");
-    } catch (error) {
-      console.error("링크 복사에 실패했습니다.", error);
       alert("링크 복사에 실패했습니다.");
+      notifications.show({
+        title: "링크 복사 성공",
+        message: "링크를 복사했습니다! 🌟",
+        color: "blue",
+      });
+    } catch (error) {
+      notifications.show({
+        title: "링크 복사 실패",
+        message: "링크 복사에 실패했습니다.",
+        color: "red",
+      });
       throw new Error("링크 복사에 실패했습니다.");
     }
   }
