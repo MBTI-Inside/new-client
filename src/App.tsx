@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { Loader, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/charts/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { Layout } from "@/components/Layout";
 import { globalTheme } from "@/styles/global";
