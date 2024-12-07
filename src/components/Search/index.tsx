@@ -31,9 +31,9 @@ export const Search = ({ type }: SearchProps) => {
   const { closeModal } = useModal();
   const form = useForm({
     initialValues: {
-      types: "",
+      mbtiType: "",
       subject: "",
-      mbtiType: {
+      mbtiTypeData: {
         energy: initialEnergy,
         awareness: initialAwareness,
         judgement: initialJudgement,
@@ -47,18 +47,36 @@ export const Search = ({ type }: SearchProps) => {
   // 버튼 활성화 조건
   const isButtonDisabled =
     type === "types"
-      ? !form.values.types && !form.values.subject // types일 경우 조건
+      ? !form.values.mbtiType && !form.values.subject // types일 경우 조건
       : !form.values.title && !form.values.content; // personalities일 경우 조건
 
   const onSubmit = () => {
     if (type === "types") {
-      closeModal({ types: form.values.types, subject: form.values.subject });
+      closeModal([
+        ...(form.values.mbtiType
+          ? [{ field: "mbtiType", text: form.values.mbtiType }]
+          : []),
+        ...(form.values.subject
+          ? [{ field: "subject", text: form.values.subject }]
+          : []),
+      ]);
     } else {
-      closeModal({
-        mbtiType: `${form.values.mbtiType.energy}${form.values.mbtiType.awareness}${form.values.mbtiType.judgement}${form.values.mbtiType.life}`,
-        title: form.values.title,
-        content: form.values.content,
-      });
+      closeModal([
+        ...(form.values.mbtiTypeData
+          ? [
+              {
+                field: "mbtiTypeData",
+                text: `${form.values.mbtiTypeData.energy}${form.values.mbtiTypeData.awareness}${form.values.mbtiTypeData.judgement}${form.values.mbtiTypeData.life}`,
+              },
+            ]
+          : []),
+        ...(form.values.title
+          ? [{ field: "title", text: form.values.title }]
+          : []),
+        ...(form.values.content
+          ? [{ field: "content", text: form.values.content }]
+          : []),
+      ]);
     }
   };
 
@@ -69,7 +87,7 @@ export const Search = ({ type }: SearchProps) => {
           <Select
             data={MBTI_TYPES_OPTIONS}
             placeholder="유형을 선택해 주세요."
-            {...form.getInputProps("types")}
+            {...form.getInputProps("mbtiType")}
           />
           <TextInput
             placeholder="내용을 입력해 주세요."
@@ -83,24 +101,24 @@ export const Search = ({ type }: SearchProps) => {
             <SegmentedControl
               w="100%"
               data={["E", "I"]}
-              {...form.getInputProps("mbtiType.energy")}
+              {...form.getInputProps("mbtiTypeData.energy")}
             />
             <SegmentedControl
               w="100%"
               data={["S", "N"]}
-              {...form.getInputProps("mbtiType.awareness")}
+              {...form.getInputProps("mbtiTypeData.awareness")}
             />
           </Flex>
           <Flex gap="sm">
             <SegmentedControl
               w="100%"
               data={["T", "F"]}
-              {...form.getInputProps("mbtiType.judgement")}
+              {...form.getInputProps("mbtiTypeData.judgement")}
             />
             <SegmentedControl
               w="100%"
               data={["J", "P"]}
-              {...form.getInputProps("mbtiType.life")}
+              {...form.getInputProps("mbtiTypeData.life")}
             />
           </Flex>
           <TextInput

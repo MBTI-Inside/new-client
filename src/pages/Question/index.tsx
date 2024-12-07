@@ -1,19 +1,30 @@
 import axiosRequest from "@/api";
 import { useHandleError } from "@/hooks/useHandleError";
 import { useInView } from "react-intersection-observer";
-import { ActionIcon, Flex, Text, Loader } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { ActionIcon, Flex, Text, Loader, Badge } from "@mantine/core";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Question } from "@/@types";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Search } from "@/components/Search";
 import { useModal } from "@/hooks/useModal";
 
+interface SearchCriteria {
+  field: string; // 검색 필드 이름 (e.g., "mbtiType", "subject")
+  text: string; // 검색할 값
+}
+
+const FIELD_LABELS: Record<string, string> = {
+  mbtiType: "유형",
+  subject: "내용",
+};
+
 const QuestionPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
   const { openModal } = useModal();
   const [limit] = useState(5);
+  const [search, setSearch] = useState<SearchCriteria[]>([]); // 배열 형태로 검색 조건 관리
 
   const {
     data: questions,
@@ -21,11 +32,11 @@ const QuestionPage = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ["get-surveys"],
-    ({ pageParam: skip }) =>
+    ["get-surveys", JSON.stringify(search)],
+    ({ pageParam: skip = 0 }) =>
       axiosRequest.requestAxios<Question[]>(
         "get",
-        `/surveys?limit=${limit}&skip=${skip}`
+        `/surveys?limit=${limit}&skip=${skip}&search=${JSON.stringify(search)}`
       ),
     {
       getNextPageParam: (lastPage, allPages) => {
@@ -68,7 +79,23 @@ const QuestionPage = () => {
                 "검색어 추가",
                 true
               ).then((result) => {
-                console.log(result);
+                if (Array.isArray(result) && result.length > 0) {
+                  setSearch((prev) => {
+                    // 기존 상태와 새로 추가된 데이터를 병합하면서 중복 제거
+                    const merged = [
+                      ...prev,
+                      ...result.filter(
+                        (newItem) =>
+                          !prev.some(
+                            (existingItem) =>
+                              existingItem.field === newItem.field &&
+                              existingItem.text === newItem.text
+                          )
+                      ),
+                    ];
+                    return merged;
+                  });
+                }
               });
             }}
           >
@@ -76,6 +103,41 @@ const QuestionPage = () => {
           </ActionIcon>
         </Flex>
       </Flex>
+      {search.length > 0 && (
+        <Flex gap="sm" wrap="wrap" p="md">
+          {search.map((item) => (
+            <Badge
+              key={item.field + item.text}
+              color="cyan"
+              size="lg"
+              variant="filled"
+              rightSection={
+                <ActionIcon
+                  variant="subtle"
+                  size="sm"
+                  color="white"
+                  onClick={() => {
+                    // 상태에서 해당 항목 제거
+                    setSearch((prev) =>
+                      prev.filter(
+                        (existingItem) =>
+                          !(
+                            existingItem.field === item.field &&
+                            existingItem.text === item.text
+                          )
+                      )
+                    );
+                  }}
+                >
+                  <IconX />
+                </ActionIcon>
+              }
+            >
+              {`${FIELD_LABELS[item.field]}: ${item.text}`}
+            </Badge>
+          ))}
+        </Flex>
+      )}
       <Flex
         direction="column"
         w="100%"
@@ -88,7 +150,7 @@ const QuestionPage = () => {
           return (
             <Fragment key={pageIndex}>
               {page.map((data) => {
-                return <QuestionCard question={data} />;
+                return <QuestionCard key={data._id} question={data} />;
               })}
             </Fragment>
           );
