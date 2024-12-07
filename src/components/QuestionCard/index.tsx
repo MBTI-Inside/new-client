@@ -33,6 +33,7 @@ export const QuestionCard = ({ question }: QuestionCardProps) => {
           {question.answer.map((answer) => {
             return (
               <Progress.Section
+                key={answer.content}
                 value={answer.proportion}
                 color={mbtiTypeColor[answer.type]}
               >
