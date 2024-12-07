@@ -7,9 +7,12 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { Question } from "@/@types";
 import { QuestionCard } from "@/components/QuestionCard";
+import { Search } from "@/components/Search";
+import { useModal } from "@/hooks/useModal";
 
 const QuestionPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
+  const { openModal } = useModal();
   const [limit] = useState(5);
 
   const {
@@ -54,7 +57,21 @@ const QuestionPage = () => {
           QuestBTI
         </Text>
         <Flex gap="sm">
-          <ActionIcon radius="100%" size="4rem" color="cyan">
+          <ActionIcon
+            radius="100%"
+            size="4rem"
+            color="cyan"
+            onClick={() => {
+              openModal(
+                <Search type="types" />,
+                null,
+                "검색어 추가",
+                true
+              ).then((result) => {
+                console.log(result);
+              });
+            }}
+          >
             <IconSearch size="2rem" />
           </ActionIcon>
         </Flex>

@@ -9,6 +9,7 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { MemoCard } from "@/components/MemoCard";
+import { Search } from "@/components/Search";
 
 const MemoPage = () => {
   const setError = useHandleError(); // 에러 핸들링 함수
@@ -58,7 +59,21 @@ const MemoPage = () => {
           MemoBTI
         </Text>
         <Flex gap="sm">
-          <ActionIcon radius="100%" size="4rem" color="cyan">
+          <ActionIcon
+            radius="100%"
+            size="4rem"
+            color="cyan"
+            onClick={() => {
+              openModal(
+                <Search type="personalities" />,
+                null,
+                "검색어 추가",
+                true
+              ).then((result) => {
+                console.log(result);
+              });
+            }}
+          >
             <IconSearch size="2rem" />
           </ActionIcon>
           <ActionIcon
