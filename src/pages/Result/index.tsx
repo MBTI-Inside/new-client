@@ -7,11 +7,7 @@ import {
   MBTI_TYPE_COLORS_PAIRS,
   mbtiTypeColor,
 } from "@/constants/MBTIColors";
-import {
-  MBTI_OPTIONS_DATA,
-  MBTI_TYPES_OPTIONS,
-  MBTI_TYPES_VALUE,
-} from "@/constants/MBTIOptions";
+import { MBTI_TYPES_OPTIONS, MBTI_TYPES_VALUE } from "@/constants/MBTIOptions";
 import useCustomQuery from "@/hooks/useCustomQuery";
 import useRouter from "@/hooks/useRouter";
 import { themeColor } from "@/styles/color";
@@ -22,14 +18,10 @@ import {
   Button,
   Card,
   Flex,
-  Grid,
-  GridCol,
   Progress,
   Text,
-  Title,
 } from "@mantine/core";
 import { IconLink } from "@tabler/icons-react";
-import { Fragment } from "react/jsx-runtime";
 
 // 주어진 배열의 rate 합이 100이 되도록 조정하는 함수
 const normalizeRates = (array: MBTIProportion[]): MBTIProportion[] => {
