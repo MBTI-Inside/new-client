@@ -2,6 +2,7 @@ import { MBTI_OPTIONS_DATA, MBTI_TYPES_OPTIONS } from "@/constants/MBTIOptions";
 import { useModal } from "@/hooks/useModal";
 import {
   Button,
+  Checkbox,
   Flex,
   SegmentedControl,
   Select,
@@ -39,6 +40,7 @@ export const Search = ({ type }: SearchProps) => {
         judgement: initialJudgement,
         life: initialLife,
       },
+      isUseMbtiTypeData: false,
       title: "",
       content: "",
     },
@@ -48,7 +50,9 @@ export const Search = ({ type }: SearchProps) => {
   const isButtonDisabled =
     type === "types"
       ? !form.values.mbtiType && !form.values.subject // types일 경우 조건
-      : !form.values.title && !form.values.content; // personalities일 경우 조건
+      : form.values.isUseMbtiTypeData
+        ? false
+        : !form.values.title && !form.values.content; // personalities일 경우 조건
 
   const onSubmit = () => {
     if (type === "types") {
@@ -62,10 +66,10 @@ export const Search = ({ type }: SearchProps) => {
       ]);
     } else {
       closeModal([
-        ...(form.values.mbtiTypeData
+        ...(form.values.isUseMbtiTypeData
           ? [
               {
-                field: "mbtiTypeData",
+                field: "mbtiType",
                 text: `${form.values.mbtiTypeData.energy}${form.values.mbtiTypeData.awareness}${form.values.mbtiTypeData.judgement}${form.values.mbtiTypeData.life}`,
               },
             ]
@@ -121,6 +125,10 @@ export const Search = ({ type }: SearchProps) => {
               {...form.getInputProps("mbtiTypeData.life")}
             />
           </Flex>
+          <Checkbox
+            label="MBTI 유형 검색 사용 여부"
+            {...form.getInputProps("isUseMbtiTypeData")}
+          />
           <TextInput
             placeholder="제목을 입력하세요."
             {...form.getInputProps("title")}
