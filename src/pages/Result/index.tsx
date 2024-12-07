@@ -15,6 +15,7 @@ import {
 import useCustomQuery from "@/hooks/useCustomQuery";
 import useRouter from "@/hooks/useRouter";
 import { themeColor } from "@/styles/color";
+import { shareLink } from "@/utils/shareLink";
 import {
   ActionIcon,
   Badge,
@@ -81,7 +82,6 @@ const ResultPage = () => {
       staleTime: 1000 * 5 * 60,
     },
   });
-  console.log(location.state);
 
   // 실행
   let normalizedState: MBTIProportions = {
@@ -98,6 +98,24 @@ const ResultPage = () => {
   const firstRowTags = mbtiData?.tags.slice(0, 2); // 상단 태그
   const secondRowTags = mbtiData?.tags.slice(2); // 하단 태그
 
+  const handleShare = async () => {
+    try {
+      await shareLink({
+        title: document.title,
+        text: "링크를 공유합니다.",
+        url: window.location.href,
+      });
+    } catch (error) {
+      // 타입 단언을 통해 에러 메시지 처리
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        // `error`가 객체 또는 문자열일 수 있음
+        throw new Error(String(error));
+      }
+    }
+  };
+
   return (
     <Flex direction="column">
       <Flex justify="space-between" p="md" align="center">
@@ -107,7 +125,7 @@ const ResultPage = () => {
           size="4rem"
           color={color}
           onClick={() => {
-            // TODO: 공유 링크 로직 적용
+            handleShare();
           }}
         >
           <IconLink />
@@ -126,7 +144,7 @@ const ResultPage = () => {
             <Flex w="100%" justify="center" gap="xl">
               {firstRowTags?.map((tag) => {
                 return (
-                  <Badge w="8rem" color={color}>
+                  <Badge key={tag} w="8rem" color={color}>
                     #{tag}
                   </Badge>
                 );
@@ -135,7 +153,7 @@ const ResultPage = () => {
             <Flex w="100%" justify="center" gap="xl">
               {secondRowTags?.map((tag) => {
                 return (
-                  <Badge w="8rem" color={color}>
+                  <Badge key={tag} w="8rem" color={color}>
                     #{tag}
                   </Badge>
                 );
@@ -190,6 +208,7 @@ const ResultPage = () => {
           {mbtiData?.fit.map((mbti) => {
             return (
               <Card
+                key={mbti.description}
                 bg={
                   mbti.type === "good" ? themeColor.red[2] : themeColor.blue[2]
                 }
