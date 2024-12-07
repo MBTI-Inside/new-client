@@ -215,7 +215,7 @@ const ResultPage = () => {
                   <Text fw={600}>
                     {mbti.type === "good" ? "잘" : "안"} 어울리는 유형
                   </Text>
-                  <Text fw={600}>{mbti.mbti}</Text>
+                  <Text fw={600}>{mbti.targetMbti}</Text>
                 </Flex>
                 <Text style={{ whiteSpace: "normal" }}>{mbti.description}</Text>
               </Card>
