@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { ActionIcon, Flex, Text, Loader, Badge } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import { Question } from "@/@types";
 import { QuestionCard } from "@/components/QuestionCard";
 import { Search } from "@/components/Search";

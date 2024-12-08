@@ -84,7 +84,7 @@ const TestPage = () => {
         url: `/mbtis/${mbtiTypeResult}`, // 동적 URL
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           // TODO: 로딩 좀 걸어주면 좋을 것 같은뎅..
           navigateTo(`/result/${mbtiTypeResult}`, mbtiResult);
         },
